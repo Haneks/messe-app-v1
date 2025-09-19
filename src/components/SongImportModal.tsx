@@ -8,9 +8,10 @@ interface SongImportModalProps {
   isOpen: boolean;
   onClose: () => void;
   onImportSong: (song: Omit<Song, 'id'>) => void;
+  onSaveToLibrary?: (song: Omit<Song, 'id'>) => Promise<any>;
 }
 
-export default function SongImportModal({ isOpen, onClose, onImportSong }: SongImportModalProps) {
+export default function SongImportModal({ isOpen, onClose, onImportSong, onSaveToLibrary }: SongImportModalProps) {
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { progress, importSongFromFile, resetProgress } = useSongImport();
@@ -52,9 +53,21 @@ export default function SongImportModal({ isOpen, onClose, onImportSong }: SongI
     });
 
     if (result.success && result.song) {
-      // Auto-import after a short delay to show success message
+      // Ajouter le chant à la présentation
+      onImportSong(result.song);
+      
+      // Sauvegarder automatiquement dans la bibliothèque
+      if (onSaveToLibrary) {
+        try {
+          await onSaveToLibrary(result.song);
+          console.log(`✅ Chant importé "${result.song.title}" ajouté automatiquement à la bibliothèque`);
+        } catch (error) {
+          console.warn(`⚠️ Impossible d'ajouter "${result.song.title}" à la bibliothèque:`, error);
+        }
+      }
+      
+      // Fermer le modal après un court délai pour montrer le message de succès
       setTimeout(() => {
-        onImportSong(result.song!);
         handleClose();
       }, 1500);
     }

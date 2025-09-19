@@ -191,7 +191,19 @@ export default function SongsPanel({ songs, onAddSong, onUpdateSong, onDeleteSon
       <SongImportModal
         isOpen={showImportModal}
         onClose={() => setShowImportModal(false)}
-        onImportSong={onAddSong}
+        onImportSong={(songData) => {
+          // Ajouter le chant à la présentation
+          onAddSong(songData);
+          
+          // Afficher une notification de succès pour l'import
+          setNotification({
+            type: 'success',
+            title: 'Chant importé',
+            message: `"${songData.title}" a été importé et ajouté à votre bibliothèque`,
+            duration: 4000
+          });
+        }}
+        onSaveToLibrary={saveToLibrary}
       />
 
       {showLibrary && (
