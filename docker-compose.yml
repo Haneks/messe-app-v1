@@ -1,0 +1,39 @@
+# Version supprimée pour compatibilité avec Docker Compose v2
+
+services:
+  liturgy-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: messe-app
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - liturgy-network
+
+  # Service optionnel pour un reverse proxy (si nécessaire)
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-proxy.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - liturgy-app
+    networks:
+      - liturgy-network
+    profiles:
+      - proxy
+
+networks:
+  liturgy-network:
+    driver: bridge
+
+volumes:
+  nginx-logs:
+    driver: local

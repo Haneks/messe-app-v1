@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  liturgy-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: messe-app
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - liturgy-network
+
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: nginx-https-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-https.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    depends_on:
+      - liturgy-app
+    networks:
+      - liturgy-network
+    restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt:rw
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --email votre-email@example.com -d votre-domaine.com --agree-tos --non-interactive
+    profiles:
+      - ssl-setup
+
+networks:
+  liturgy-network:
+    driver: bridge
