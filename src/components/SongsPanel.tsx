@@ -214,6 +214,17 @@ export default function SongsPanel({ songs, onAddSong, onUpdateSong, onDeleteSon
               <p className="text-sm text-blue-600">
                 {songLibrary.length} chants par défaut + {customSongs.length} chants personnalisés
               </p>
+              {/* Bouton de débogage pour vérifier le localStorage */}
+              <button
+                onClick={() => {
+                  const stored = localStorage.getItem('liturgy_custom_songs');
+                  console.log('📚 Chants stockés dans localStorage:', stored);
+                  alert(`${customSongs.length} chants personnalisés trouvés. Voir console pour détails.`);
+                }}
+                className="text-xs text-blue-500 hover:text-blue-700 underline mt-1"
+              >
+                🔍 Vérifier le stockage local
+              </button>
             </div>
             <button
               onClick={() => setShowLibrary(false)}
