@@ -1,3 +1,5 @@
+import mammoth from 'mammoth';
+
 /**
  * Utility functions for file handling and validation
  */
@@ -21,8 +23,13 @@ export const validateTextFile = (file: File): FileValidationResult => {
   }
 
   // Check file type
-  const validTypes = ['text/plain', 'text/txt', 'application/txt'];
-  const validExtensions = ['.txt', '.text'];
+  const validTypes = [
+    'text/plain', 
+    'text/txt', 
+    'application/txt',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ];
+  const validExtensions = ['.txt', '.text', '.docx'];
   
   const hasValidType = validTypes.includes(file.type);
   const hasValidExtension = validExtensions.some(ext => 
@@ -32,7 +39,7 @@ export const validateTextFile = (file: File): FileValidationResult => {
   if (!hasValidType && !hasValidExtension) {
     return {
       isValid: false,
-      error: 'Format de fichier non supporté. Utilisez un fichier .txt'
+      error: 'Format de fichier non supporté. Utilisez un fichier .txt ou .docx'
     };
   }
 
@@ -43,6 +50,12 @@ export const validateTextFile = (file: File): FileValidationResult => {
  * Reads a text file with proper encoding handling
  */
 export const readTextFile = (file: File): Promise<string> => {
+  // Handle Word documents
+  if (file.name.toLowerCase().endsWith('.docx')) {
+    return readWordFile(file);
+  }
+  
+  // Handle text files
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     
@@ -68,6 +81,35 @@ export const readTextFile = (file: File): Promise<string> => {
   });
 };
 
+/**
+ * Reads a Word document and extracts text content
+ */
+export const readWordFile = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = async (event) => {
+      try {
+        const arrayBuffer = event.target?.result as ArrayBuffer;
+        if (!arrayBuffer) {
+          reject(new Error('Impossible de lire le fichier Word'));
+          return;
+        }
+        
+        const result = await mammoth.extractRawText({ arrayBuffer });
+        resolve(result.value);
+      } catch (error) {
+        reject(new Error('Erreur lors de l\'extraction du texte du fichier Word'));
+      }
+    };
+    
+    reader.onerror = () => {
+      reject(new Error('Erreur lors de la lecture du fichier Word'));
+    };
+    
+    reader.readAsArrayBuffer(file);
+  });
+};
 /**
  * Sanitizes and validates text content for song lyrics
  */

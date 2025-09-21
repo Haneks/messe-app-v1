@@ -242,7 +242,7 @@ export default function SongImportModal({ isOpen, onClose, onImportSong, onSaveT
                   Sélectionner un fichier
                 </button>
                 <p className="text-xs text-gray-500 mt-2">
-                  Formats supportés : .txt (UTF-8 recommandé)
+                  Formats supportés : .txt, .docx (UTF-8 recommandé pour .txt)
                 </p>
               </div>
             )}
@@ -260,7 +260,7 @@ export default function SongImportModal({ isOpen, onClose, onImportSong, onSaveT
                   Format recommandé
                 </p>
                 <ul className="text-xs text-blue-700 space-y-1">
-                  <li>• Fichier texte (.txt) encodé en UTF-8</li>
+                  <li>• Fichier texte (.txt) encodé en UTF-8 ou Word (.docx)</li>
                   <li>• Titre du chant sur la première ligne (optionnel)</li>
                   <li>• Paroles organisées en couplets et refrains</li>
                   <li>• Utilisez "R/" pour marquer les refrains</li>
@@ -274,7 +274,7 @@ export default function SongImportModal({ isOpen, onClose, onImportSong, onSaveT
         <input
           ref={fileInputRef}
           type="file"
-          accept=".txt,.text,text/plain"
+          accept=".txt,.text,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           onChange={handleFileInputChange}
           className="hidden"
         />
