@@ -3,9 +3,9 @@ import { LiturgyPresentation, LiturgyReading, Song, SlideItem } from '../types/l
 import { getLiturgicalSeason } from '../utils/liturgicalColors';
 
 export class PowerPointService {
-  private static readonly TARGET_WORDS_PER_SLIDE = 85; // Target 80-90 words
-  private static readonly MIN_WORDS_PER_SLIDE = 80;
-  private static readonly MAX_WORDS_PER_SLIDE = 90;
+  private static readonly TARGET_WORDS_PER_SLIDE = 25; // Target 20-30 words
+  private static readonly MIN_WORDS_PER_SLIDE = 20;
+  private static readonly MAX_WORDS_PER_SLIDE = 30;
 
   static async exportPresentation(presentation: LiturgyPresentation): Promise<void> {
     const pptx = new PptxGenJS();
@@ -194,12 +194,12 @@ export class PowerPointService {
         y: 1.8,
         w: 8.4,
         h: 5,
-        fontSize: 20,
+        fontSize: 28,
         color: '1F2937',
         align: 'left',
         fontFace: 'Arial',
         valign: 'top',
-        lineSpacing: 28
+        lineSpacing: 32
       });
 
       // Indicateur de nombre de mots (pour debug)
@@ -313,12 +313,12 @@ export class PowerPointService {
         y: 1.8,
         w: 8,
         h: 5,
-        fontSize: 18,
+        fontSize: 28,
         color: '1F2937',
         align: 'center',
         fontFace: 'Arial',
         valign: 'top',
-        lineSpacing: 24
+        lineSpacing: 32
       });
 
       // Indicateur de nombre de mots
@@ -365,7 +365,7 @@ export class PowerPointService {
       // Si ajouter cette phrase dépasse la limite maximale et qu'on a déjà du contenu
       if (potentialWordCount > this.MAX_WORDS_PER_SLIDE && currentWordCount > 0) {
         // Si le chunk actuel est trop petit, essayer d'ajouter une phrase courte
-        if (currentWordCount < this.MIN_WORDS_PER_SLIDE && sentenceWordCount <= 15) {
+        if (currentWordCount < this.MIN_WORDS_PER_SLIDE && sentenceWordCount <= 10) {
           currentChunk += (currentChunk ? ' ' : '') + sentence;
           currentWordCount = potentialWordCount;
         }
@@ -454,16 +454,24 @@ export class PowerPointService {
   }
 
   private static splitIntoSentences(text: string): string[] {
-    // Diviser en phrases en préservant la ponctuation
+    // Diviser en phrases courtes pour optimiser l'affichage
     return text
-      .split(/(?<=[.!?])\s+/)
+      .split(/(?<=[.!?;:])\s+|(?<=\n\n)/) // Inclure les deux-points et points-virgules
       .map(sentence => sentence.trim())
-      .filter(sentence => sentence.length > 0);
+      .filter(sentence => sentence.length > 0)
+      .flatMap(sentence => {
+        // Si une phrase est trop longue (>40 mots), la diviser davantage
+        const wordCount = this.countWords(sentence);
+        if (wordCount > 40) {
+          return sentence.split(/,\s+/).filter(part => part.trim().length > 0);
+        }
+        return [sentence];
+      });
   }
 
   private static splitSongIntoSections(lyrics: string): Array<{content: string, type: string}> {
     const sections: Array<{content: string, type: string}> = [];
-    const parts = lyrics.split(/\n\s*\n/);
+    const parts = lyrics.split(/\n\s*\n/); // Séparer par lignes vides
 
     for (const part of parts) {
       const trimmedPart = part.trim();
@@ -476,10 +484,40 @@ export class PowerPointService {
         type = 'numbered_verse';
       }
 
-      sections.push({
-        content: trimmedPart,
-        type: type
-      });
+      // Diviser les sections trop longues en sous-sections
+      const lines = trimmedPart.split('\n');
+      let currentSection = '';
+      let currentWordCount = 0;
+
+      for (const line of lines) {
+        const lineWordCount = this.countWords(line);
+        const potentialWordCount = currentWordCount + lineWordCount;
+
+        if (potentialWordCount > this.MAX_WORDS_PER_SLIDE && currentWordCount > 0) {
+          // Finaliser la section actuelle
+          if (currentSection.trim()) {
+            sections.push({
+              content: currentSection.trim(),
+              type: type
+            });
+          }
+          
+          // Commencer une nouvelle section
+          currentSection = line;
+          currentWordCount = lineWordCount;
+        } else {
+          currentSection += (currentSection ? '\n' : '') + line;
+          currentWordCount = potentialWordCount;
+        }
+      }
+
+      // Ajouter la dernière section
+      if (currentSection.trim()) {
+        sections.push({
+          content: currentSection.trim(),
+          type: type
+        });
+      }
     }
 
     return sections;
@@ -503,7 +541,7 @@ export class PowerPointService {
         // Si la combinaison ne dépasse pas la limite maximale
         if (combinedWordCount <= this.MAX_WORDS_PER_SLIDE) {
           mergedChunks.push({
-            content: currentChunk.content + ' ' + nextChunk.content,
+            content: currentChunk.content + '\n\n' + nextChunk.content,
             wordCount: combinedWordCount
           });
           i++; // Ignorer le chunk suivant car il a été fusionné
