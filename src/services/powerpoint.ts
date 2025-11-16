@@ -78,11 +78,12 @@ export class PowerPointService {
       y: 2,
       w: 9,
       h: 1.5,
-      fontSize: 44,
+      fontSize: 40,
       color: 'FFFFFF',
       align: 'center',
       fontFace: 'Arial',
-      bold: true
+      bold: true,
+      lineSpacing: 14.4
     });
 
     titleSlide.addText(new Date(presentation.date).toLocaleDateString('fr-FR', {
@@ -194,12 +195,12 @@ export class PowerPointService {
         y: 1.8,
         w: 8.4,
         h: 5,
-        fontSize: 28,
+        fontSize: 32,
         color: '1F2937',
         align: 'left',
         fontFace: 'Arial',
         valign: 'top',
-        lineSpacing: 32
+        lineSpacing: 23.04
       });
 
       // Indicateur de nombre de mots (pour debug)
@@ -313,12 +314,12 @@ export class PowerPointService {
         y: 1.8,
         w: 8,
         h: 5,
-        fontSize: 28,
+        fontSize: 32,
         color: '1F2937',
         align: 'center',
         fontFace: 'Arial',
         valign: 'top',
-        lineSpacing: 32
+        lineSpacing: 23.04
       });
 
       // Indicateur de nombre de mots
