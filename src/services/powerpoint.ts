@@ -6,6 +6,8 @@ export class PowerPointService {
   private static readonly TARGET_WORDS_PER_SLIDE = 25; // Target 20-30 words
   private static readonly MIN_WORDS_PER_SLIDE = 20;
   private static readonly MAX_WORDS_PER_SLIDE = 30;
+  private static readonly LINE_SPACING = 12; // Single line spacing
+
 
   static async exportPresentation(presentation: LiturgyPresentation): Promise<void> {
     const pptx = new PptxGenJS();
