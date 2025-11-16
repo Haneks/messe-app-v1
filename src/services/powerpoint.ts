@@ -85,7 +85,6 @@ export class PowerPointService {
       align: 'center',
       fontFace: 'Arial',
       bold: true,
-      lineSpacing: 14.4
     });
 
     titleSlide.addText(new Date(presentation.date).toLocaleDateString('fr-FR', {
@@ -202,7 +201,6 @@ export class PowerPointService {
         align: 'left',
         fontFace: 'Arial',
         valign: 'top',
-        lineSpacing: 23.04
       });
 
       // Indicateur de nombre de mots (pour debug)
@@ -321,7 +319,6 @@ export class PowerPointService {
         align: 'center',
         fontFace: 'Arial',
         valign: 'top',
-        lineSpacing: 23.04
       });
 
       // Indicateur de nombre de mots
