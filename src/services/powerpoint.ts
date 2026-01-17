@@ -6,6 +6,8 @@ export class PowerPointService {
   private static readonly TARGET_WORDS_PER_SLIDE = 25; // Target 20-30 words
   private static readonly MIN_WORDS_PER_SLIDE = 20;
   private static readonly MAX_WORDS_PER_SLIDE = 30;
+  private static readonly LINE_SPACING = 12; // Single line spacing
+
 
   static async exportPresentation(presentation: LiturgyPresentation): Promise<void> {
     const pptx = new PptxGenJS();
@@ -78,11 +80,12 @@ export class PowerPointService {
       y: 2,
       w: 9,
       h: 1.5,
-      fontSize: 44,
+      fontSize: 24,
       color: 'FFFFFF',
       align: 'center',
       fontFace: 'Arial',
-      bold: true
+      bold: true,
+      lineSpacing: 17.28
     });
 
     titleSlide.addText(new Date(presentation.date).toLocaleDateString('fr-FR', {
@@ -98,7 +101,8 @@ export class PowerPointService {
       fontSize: 24,
       color: 'FFFFFF',
       align: 'center',
-      fontFace: 'Arial'
+      fontFace: 'Arial',
+      lineSpacing: 17.28
     });
 
     // Numéro de slide
@@ -133,11 +137,12 @@ export class PowerPointService {
       y: 2.5,
       w: 9,
       h: 1.2,
-      fontSize: 36,
+      fontSize: 24,
       color: '1E40AF',
       bold: true,
       align: 'center',
-      fontFace: 'Arial'
+      fontFace: 'Arial',
+      lineSpacing: 17.28
     });
 
     titleSlide.addText(reading.reference, {
@@ -149,7 +154,8 @@ export class PowerPointService {
       color: '64748B',
       italic: true,
       align: 'center',
-      fontFace: 'Arial'
+      fontFace: 'Arial',
+      lineSpacing: 17.28
     });
 
     // Numéro de slide
@@ -181,11 +187,12 @@ export class PowerPointService {
         y: 0.5,
         w: 9,
         h: 0.8,
-        fontSize: 28,
+        fontSize: 24,
         color: '1E40AF',
         bold: true,
         align: 'center',
-        fontFace: 'Arial'
+        fontFace: 'Arial',
+        lineSpacing: 17.28
       });
 
       // Contenu optimisé
@@ -194,12 +201,12 @@ export class PowerPointService {
         y: 1.8,
         w: 8.4,
         h: 5,
-        fontSize: 28,
+        fontSize: 34,
         color: '1F2937',
         align: 'left',
         fontFace: 'Arial',
         valign: 'top',
-        lineSpacing: 32
+        lineSpacing: 24.48
       });
 
       // Indicateur de nombre de mots (pour debug)
@@ -249,11 +256,12 @@ export class PowerPointService {
       y: 2.5,
       w: 9,
       h: 1.2,
-      fontSize: 32,
+      fontSize: 24,
       color: 'D97706',
       bold: true,
       align: 'center',
-      fontFace: 'Arial'
+      fontFace: 'Arial',
+      lineSpacing: 17.28
     });
 
     if (song.author || song.melody) {
@@ -263,11 +271,12 @@ export class PowerPointService {
         y: 4,
         w: 9,
         h: 0.6,
-        fontSize: 18,
+        fontSize: 24,
         color: '92400E',
         italic: true,
         align: 'center',
-        fontFace: 'Arial'
+        fontFace: 'Arial',
+        lineSpacing: 17.28
       });
     }
 
@@ -304,7 +313,8 @@ export class PowerPointService {
         color: 'D97706',
         bold: true,
         align: 'center',
-        fontFace: 'Arial'
+        fontFace: 'Arial',
+        lineSpacing: 17.28
       });
 
       // Paroles optimisées
@@ -313,12 +323,12 @@ export class PowerPointService {
         y: 1.8,
         w: 8,
         h: 5,
-        fontSize: 28,
+        fontSize: 34,
         color: '1F2937',
         align: 'center',
         fontFace: 'Arial',
         valign: 'top',
-        lineSpacing: 32
+        lineSpacing: 24.48
       });
 
       // Indicateur de nombre de mots
