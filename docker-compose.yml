@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: messe-app
     ports:
-      - "3000:80"
+      - "7655:7655"
     restart: unless-stopped
     environment:
       - NODE_ENV=production
